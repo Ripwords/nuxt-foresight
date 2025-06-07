@@ -1,0 +1,85 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Nuxt Mouse-Tracking Prefetch Module
+
+## Overview
+This Nuxt module implements intelligent data prefetching based on user mouse movement patterns. The system tracks mouse position using VueUse's `useMouse` composable and prefetches data that users are likely to need based on their cursor behavior.
+
+## Core Architecture
+
+### CacheKeyBuilder System
+The heart of the module is the [CacheKeyBuilder class](mdc:playground/utils/cache.ts) which provides:
+
+- **Type-Safe Key Management**: Prevents duplicate keys at the TypeScript level using advanced generic constraints
+- **Parameter Type Tracking**: Each prefetch callback's parameter type is stored in the generic type system
+- **Fluent Interface**: Chainable methods for adding multiple prefetch configurations
+
+Key features:
+```typescript
+// ✅ Type-safe - each key tracks its parameter type
+const builder = new CacheKeyBuilder()
+  .addPrefetch('user', (params: { id: number }) => { /* fetch user */ })
+  .addPrefetch('posts', (params: string) => { /* fetch posts */ })
+
+// ✅ TypeScript knows exact parameter types
+await builder.triggerPrefetch('user', { id: 123 }) // { id: number } required
+await builder.triggerPrefetch('posts', 'category') // string required
+```
+
+### Mouse Tracking Integration
+The module integrates with [VueUse's useMouse](mdc:https:/vueuse.org/core/useMouse) composable to:
+- Track real-time mouse position (`x`, `y` coordinates)
+- Detect different input sources (`mouse`, `touch`)
+- Monitor mouse movement patterns for predictive analysis
+
+### Usage Pattern
+Current implementation in [page2.vue](mdc:playground/pages/page2.vue) demonstrates:
+- Setting up typed prefetch callbacks for different data types
+- Triggering prefetch based on predicted user intent
+- Integration with Nuxt's `useAsyncData` for actual data fetching
+
+## Key Design Principles
+
+### 1. Type Safety First
+- No `any` types allowed - all parameters are strictly typed
+- Compile-time prevention of duplicate cache keys
+- Full IntelliSense support for prefetch parameters
+
+### 2. Predictive Prefetching
+- Mouse position tracking drives prefetch decisions
+- Algorithm-based prediction (implementation TBD)
+- Proactive data loading before user interaction
+
+### 3. Performance Optimization
+- Lazy loading with intelligent prediction
+- Minimal overhead for mouse tracking
+- Efficient caching strategy with Nuxt's built-in systems
+
+## Module Development Guidelines
+
+### Adding New Prefetch Types
+1. Define the parameter type for your prefetch callback
+2. Use `addPrefetch()` with a unique key and typed callback
+3. The TypeScript system will enforce uniqueness and type safety
+
+### Mouse Algorithm Development
+- Implement prediction logic based on `useMouse()` coordinates
+- Consider factors like:
+  - Mouse velocity and direction
+  - Hover duration over interactive elements
+  - Historical movement patterns
+  - Page layout and clickable areas
+
+### Integration Points
+- **Nuxt Lifecycle**: Hook into appropriate Nuxt lifecycle events
+- **SSR Compatibility**: Ensure mouse tracking works client-side only
+- **Bundle Optimization**: Tree-shake unused prefetch configurations
+
+## Future Enhancements
+- Machine learning-based prediction algorithms
+- A/B testing for different prefetch strategies
+- Analytics integration for prefetch effectiveness
+- Configurable sensitivity and prediction thresholds
