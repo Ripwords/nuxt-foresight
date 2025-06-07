@@ -17,9 +17,9 @@ export default defineNuxtModule<ModuleOptions>({
     const resolver = createResolver(import.meta.url);
 
     nuxt.options.runtimeConfig.public.foresight = defu(
-      nuxt.options.runtimeConfig.public.foresight as Record<string, unknown>,
+      nuxt.options.runtimeConfig.public.foresight as object,
       {
-        radius: options.radius,
+        radius: options.radius ?? 50,
       }
     );
 

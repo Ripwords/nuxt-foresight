@@ -20,6 +20,10 @@ Intelligent predictive prefetching for Nuxt applications. Foresight tracks mouse
   <!-- - [🏀 Online playground](https://stackblitz.com/github/your-org/nuxt-foresight?file=playground%2Fapp.vue) -->
   <!-- - [📖 &nbsp;Documentation](https://example.com) -->
 
+## Inspiration
+
+This module is heavily inspired by [ForesightJS](https://github.com/spaansba/ForesightJS) - a lightweight JavaScript library that predicts user intent based on mouse movements and keyboard navigation. Nuxt Foresight adapts these concepts specifically for Nuxt applications with server-side rendering support and Nuxt-specific optimizations.
+
 ## Features
 
 - 🎯 &nbsp;**Predictive Prefetching** - Uses mouse velocity and trajectory to predict user interactions
@@ -190,6 +194,38 @@ Utility class for building type-safe cache configurations.
 4. **Smart Prefetching**: Triggers prefetch functions only once per element, with debouncing to avoid excessive calls
 5. **State Management**: Stores prefetched data in Nuxt's state management system for instant access
 
+## Testing
+
+This module follows the [official Nuxt module testing guidelines](https://nuxt.com/docs/guide/going-further/modules#testing) using fixtures and `@nuxt/test-utils`:
+
+```bash
+# Run all tests
+nr test
+
+# Run tests in watch mode
+nr test:watch
+
+# Run type checking
+nr test:types
+```
+
+### Test Structure
+
+The testing approach uses **fixtures** as recommended by the Nuxt team:
+
+- **`test/fixtures/basic/`**: Basic functionality testing with interactive elements
+- **`test/fixtures/ssr/`**: SSR-specific testing to ensure server-side compatibility
+- **`test/basic.test.ts`**: End-to-end tests using the basic fixture
+- **`test/ssr.test.ts`**: SSR-specific tests using the SSR fixture
+- **`test/unit.test.ts`**: Unit tests for utilities that don't require Nuxt context
+
+Each test follows the recommended workflow:
+
+1. Create a Nuxt application fixture in `test/fixtures/*`
+2. Setup Nuxt with the fixture using `setup()` from `@nuxt/test-utils/e2e`
+3. Interact with the fixture using `$fetch()` and other utilities
+4. Perform checks against the rendered output
+
 ## Contribution
 
 <details>
@@ -211,7 +247,7 @@ Utility class for building type-safe cache configurations.
   # Run ESLint
   nr lint
   
-  # Run Vitest
+  # Run all tests
   nr test
   nr test:watch
   
