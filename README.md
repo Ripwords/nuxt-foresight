@@ -7,36 +7,188 @@ Find and replace all on all files (CMD+SHIFT+F):
 - Description: My new Nuxt module
 -->
 
-# My Module
+# Nuxt Foresight
 
 [![npm version][npm-version-src]][npm-version-href]
 [![npm downloads][npm-downloads-src]][npm-downloads-href]
 [![License][license-src]][license-href]
 [![Nuxt][nuxt-src]][nuxt-href]
 
-My new Nuxt module for doing amazing things.
+Intelligent predictive prefetching for Nuxt applications. Foresight tracks mouse movement and velocity to predict user interactions and prefetch data just before it's needed.
 
 - [✨ &nbsp;Release Notes](/CHANGELOG.md)
-<!-- - [🏀 Online playground](https://stackblitz.com/github/your-org/my-module?file=playground%2Fapp.vue) -->
-<!-- - [📖 &nbsp;Documentation](https://example.com) -->
+  <!-- - [🏀 Online playground](https://stackblitz.com/github/your-org/nuxt-foresight?file=playground%2Fapp.vue) -->
+  <!-- - [📖 &nbsp;Documentation](https://example.com) -->
 
 ## Features
 
-<!-- Highlight some of the features your module provide here -->
-- ⛰ &nbsp;Foo
-- 🚠 &nbsp;Bar
-- 🌲 &nbsp;Baz
+- 🎯 &nbsp;**Predictive Prefetching** - Uses mouse velocity and trajectory to predict user interactions
+- 🎛️ &nbsp;**Configurable Radius** - Set the distance threshold for triggering prefetches
+- ⚡ &nbsp;**Performance Optimized** - Debounced tracking with smart caching to avoid duplicate requests
+- 🧩 &nbsp;**Type-Safe** - Full TypeScript support with strongly typed cache keys and values
+- 🎨 &nbsp;**Framework Agnostic** - Works with any data fetching pattern or API layer
 
 ## Quick Setup
 
 Install the module to your Nuxt application with one command:
 
 ```bash
-npx nuxi module add my-module
+npx nuxi module add nuxt-foresight
 ```
 
-That's it! You can now use My Module in your Nuxt app ✨
+That's it! You can now use Nuxt Foresight in your Nuxt app ✨
 
+## Configuration
+
+Add the module to your `nuxt.config.ts`:
+
+```typescript
+export default defineNuxtConfig({
+  modules: ["nuxt-foresight"],
+  foresight: {
+    radius: 150, // Distance in pixels to trigger prefetch (default: 100)
+  },
+});
+```
+
+## Usage
+
+### Basic Example
+
+```vue
+<template>
+  <div>
+    <button
+      v-for="item in items"
+      :key="item.id"
+      :ref="(el) => buttonRefs.set(item.id, el)"
+      @click="navigateTo(`/item/${item.id}`)"
+    >
+      {{ item.title }}
+    </button>
+  </div>
+</template>
+
+<script setup>
+import { CacheKeyBuilder } from "nuxt-foresight/runtime/utils/cache";
+
+const items = [
+  { id: 1, title: "Item 1" },
+  { id: 2, title: "Item 2" },
+  { id: 3, title: "Item 3" },
+];
+
+const buttonRefs = new Map();
+
+// Create cache builder with prefetch configurations
+const cache = new CacheKeyBuilder()
+  .addPrefetch("item-1", async () => {
+    // Prefetch item 1 data
+    await $fetch("/api/items/1");
+  })
+  .addPrefetch("item-2", async () => {
+    // Prefetch item 2 data
+    await $fetch("/api/items/2");
+  })
+  .addPrefetch("item-3", async () => {
+    // Prefetch item 3 data
+    await $fetch("/api/items/3");
+  });
+
+// Track elements for predictive prefetching
+const { states } = useForesight({
+  cache,
+  track: [
+    { key: "item-1", el: computed(() => buttonRefs.get(1)) },
+    { key: "item-2", el: computed(() => buttonRefs.get(2)) },
+    { key: "item-3", el: computed(() => buttonRefs.get(3)) },
+  ],
+});
+</script>
+```
+
+### Advanced Example with Dynamic Data
+
+```vue
+<template>
+  <div>
+    <article
+      v-for="post in posts"
+      :key="post.id"
+      :ref="(el) => articleRefs.set(post.id, el)"
+      class="post-preview"
+    >
+      <h2>{{ post.title }}</h2>
+      <p>{{ post.excerpt }}</p>
+      <NuxtLink :to="`/posts/${post.id}`">Read more</NuxtLink>
+    </article>
+  </div>
+</template>
+
+<script setup>
+const { data: posts } = await $fetch("/api/posts");
+const articleRefs = new Map();
+
+// Build cache with dynamic prefetch functions
+const cache = posts.reduce((builder, post) => {
+  return builder.addPrefetch(`post-${post.id}`, async () => {
+    // Prefetch full post content and related data
+    await Promise.all([
+      $fetch(`/api/posts/${post.id}`),
+      $fetch(`/api/posts/${post.id}/comments`),
+      $fetch(`/api/posts/${post.id}/related`),
+    ]);
+  });
+}, new CacheKeyBuilder());
+
+// Track all post elements
+const { states } = useForesight({
+  cache,
+  track: posts.map((post) => ({
+    key: `post-${post.id}`,
+    el: computed(() => articleRefs.get(post.id)),
+  })),
+});
+</script>
+```
+
+## API Reference
+
+### `useForesight(options)`
+
+The main composable for predictive prefetching.
+
+**Parameters:**
+
+- `cache`: `CacheKeyBuilder` - Instance containing prefetch configurations
+- `track`: Array of objects with:
+  - `key`: Cache key to associate with the element
+  - `el`: Reactive reference to the DOM element to track
+
+**Returns:**
+
+- `states`: Reactive object containing the state for each cache key
+
+### `CacheKeyBuilder`
+
+Utility class for building type-safe cache configurations.
+
+**Methods:**
+
+- `addPrefetch<K, X>(key, callback, defaultValue?)`: Adds a prefetch configuration
+  - `key`: Unique string key (must not conflict with existing keys)
+  - `callback`: Function to execute when prefetching (sync or async)
+  - `defaultValue`: Optional initial value for the state
+- `getKeys()`: Returns array of all registered keys
+- `triggerPrefetch(key, params?)`: Manually trigger prefetch for a specific key
+
+## How It Works
+
+1. **Mouse Tracking**: Foresight continuously tracks mouse position and calculates velocity
+2. **Trajectory Prediction**: Uses velocity to extrapolate where the mouse is heading
+3. **Proximity Detection**: Checks if predicted position is within the configured radius of tracked elements
+4. **Smart Prefetching**: Triggers prefetch functions only once per element, with debouncing to avoid excessive calls
+5. **State Management**: Stores prefetched data in Nuxt's state management system for instant access
 
 ## Contribution
 
@@ -45,40 +197,37 @@ That's it! You can now use My Module in your Nuxt app ✨
   
   ```bash
   # Install dependencies
-  npm install
+  ni
   
   # Generate type stubs
-  npm run dev:prepare
+  nr dev:prepare
   
   # Develop with the playground
-  npm run dev
+  nr dev
   
   # Build the playground
-  npm run dev:build
+  nr dev:build
   
   # Run ESLint
-  npm run lint
+  nr lint
   
   # Run Vitest
-  npm run test
-  npm run test:watch
+  nr test
+  nr test:watch
   
   # Release new version
-  npm run release
+  nr release
   ```
 
 </details>
 
-
 <!-- Badges -->
-[npm-version-src]: https://img.shields.io/npm/v/my-module/latest.svg?style=flat&colorA=020420&colorB=00DC82
-[npm-version-href]: https://npmjs.com/package/my-module
 
-[npm-downloads-src]: https://img.shields.io/npm/dm/my-module.svg?style=flat&colorA=020420&colorB=00DC82
-[npm-downloads-href]: https://npm.chart.dev/my-module
-
-[license-src]: https://img.shields.io/npm/l/my-module.svg?style=flat&colorA=020420&colorB=00DC82
-[license-href]: https://npmjs.com/package/my-module
-
+[npm-version-src]: https://img.shields.io/npm/v/nuxt-foresight/latest.svg?style=flat&colorA=020420&colorB=00DC82
+[npm-version-href]: https://npmjs.com/package/nuxt-foresight
+[npm-downloads-src]: https://img.shields.io/npm/dm/nuxt-foresight.svg?style=flat&colorA=020420&colorB=00DC82
+[npm-downloads-href]: https://npm.chart.dev/nuxt-foresight
+[license-src]: https://img.shields.io/npm/l/nuxt-foresight.svg?style=flat&colorA=020420&colorB=00DC82
+[license-href]: https://npmjs.com/package/nuxt-foresight
 [nuxt-src]: https://img.shields.io/badge/Nuxt-020420?logo=nuxt.js
 [nuxt-href]: https://nuxt.com
