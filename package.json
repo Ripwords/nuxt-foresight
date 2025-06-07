@@ -1,6 +1,6 @@
 {
   "name": "nuxt-foresight",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Nuxt module for prefetching data with mouse movement",
   "repository": "https://github.com/Ripwords/nuxt-foresight",
   "license": "MIT",
@@ -38,19 +38,21 @@
     "defu": "^6.1.4"
   },
   "devDependencies": {
-    "@nuxt/devtools": "^2.4.1",
+    "@nuxt/devtools": "^2.5.0",
     "@nuxt/eslint-config": "^1.4.1",
     "@nuxt/module-builder": "^1.0.1",
     "@nuxt/schema": "^3.17.5",
     "@nuxt/test-utils": "^3.19.1",
-    "@types/node": "latest",
+    "@types/node": "^22.15.30",
+    "@vue/test-utils": "^2.4.6",
     "@vueuse/nuxt": "13.3.0",
     "changelogen": "^0.6.1",
     "eslint": "^9.28.0",
+    "happy-dom": "^17.6.3",
     "nuxt": "^3.17.5",
     "typescript": "~5.8.3",
-    "vitest": "^3.2.0",
-    "vue": "^3.5.0",
+    "vitest": "^3.2.2",
+    "vue": "^3.5.16",
     "vue-tsc": "^2.2.10"
   }
 }
