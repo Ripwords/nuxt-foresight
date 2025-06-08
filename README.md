@@ -51,9 +51,17 @@ export default defineNuxtConfig({
   modules: ["nuxt-foresight"],
   foresight: {
     radius: 150, // Distance in pixels to trigger prefetch (default: 100)
+    mode: "single", // "single" or "multiple" - controls how many elements are prefetched (default: "multiple")
   },
 });
 ```
+
+### Configuration Options
+
+- **`radius`** (number, default: `100`): Distance in pixels from the predicted mouse position to trigger prefetch
+- **`mode`** (string, default: `"multiple"`):
+  - `"multiple"`: Prefetch all elements within the radius
+  - `"single"`: Prefetch only the closest element within the radius
 
 ## Usage
 

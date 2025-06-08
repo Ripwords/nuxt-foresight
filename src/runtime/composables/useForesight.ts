@@ -14,7 +14,10 @@ export const useForesight = <T extends Record<string, unknown>>({
     el: Readonly<ShallowRef<HTMLElement | null>>;
   }[];
 }) => {
-  const { radius } = useRuntimeConfig().public.foresight as { radius: number };
+  const { radius, mode } = useRuntimeConfig().public.foresight as {
+    radius: number;
+    mode: "single" | "multiple";
+  };
   const fetchedKeys = new Map<keyof T, boolean>();
 
   const keysInCache: (keyof T)[] = cache.getKeys();
@@ -98,6 +101,14 @@ export const useForesight = <T extends Record<string, unknown>>({
       if (distance < radius) {
         elementsWithinRadius.push({ key: item.key, distance });
       }
+    }
+
+    // If mode is "single", return only the closest element
+    if (mode === "single" && elementsWithinRadius.length > 0) {
+      const closestElement = elementsWithinRadius.reduce((closest, current) =>
+        current.distance < closest.distance ? current : closest
+      );
+      return [closestElement];
     }
 
     return elementsWithinRadius;

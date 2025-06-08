@@ -3,6 +3,7 @@ import { defu } from "defu";
 
 export interface ModuleOptions {
   radius?: number;
+  mode?: "single" | "multiple";
 }
 
 export default defineNuxtModule<ModuleOptions>({
@@ -11,7 +12,8 @@ export default defineNuxtModule<ModuleOptions>({
     configKey: "foresight",
   },
   defaults: {
-    radius: 50,
+    radius: 100,
+    mode: "single",
   },
   setup(options, nuxt) {
     const resolver = createResolver(import.meta.url);
@@ -19,7 +21,8 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.runtimeConfig.public.foresight = defu(
       nuxt.options.runtimeConfig.public.foresight as object,
       {
-        radius: options.radius ?? 50,
+        radius: options.radius ?? 100,
+        mode: options.mode ?? "single",
       }
     );
 
