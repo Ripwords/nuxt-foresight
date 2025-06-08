@@ -1,6 +1,22 @@
 # Changelog
 
 
+## v0.0.3
+
+[compare changes](https://github.com/Ripwords/nuxt-foresight/compare/v0.0.2...v0.0.3)
+
+### 🩹 Fixes
+
+- Reorder import statements in useForesight.ts for improved clarity ([3b225ee](https://github.com/Ripwords/nuxt-foresight/commit/3b225ee))
+
+### 🏡 Chore
+
+- Update dependencies and enhance README with testing instructions and module inspiration ([099397a](https://github.com/Ripwords/nuxt-foresight/commit/099397a))
+
+### ❤️ Contributors
+
+- JJ <teohjjteoh@gmail.com>
+
 ## v0.0.2
 
 
