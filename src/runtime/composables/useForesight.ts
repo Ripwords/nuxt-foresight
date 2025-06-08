@@ -1,8 +1,8 @@
-import type { CacheKeyBuilder } from "../utils/cache";
 import { useRuntimeConfig, useState } from "#app";
 import { computed, ref } from "#imports";
 import { useMouse, watchDebounced } from "@vueuse/core";
 import type { ShallowRef } from "vue";
+import type { CacheKeyBuilder } from "../utils/cache";
 
 export const useForesight = <T extends Record<string, unknown>>({
   cache,
