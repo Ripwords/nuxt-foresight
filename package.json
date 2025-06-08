@@ -1,6 +1,6 @@
 {
   "name": "nuxt-foresight",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Nuxt module for prefetching data with mouse movement",
   "repository": "https://github.com/Ripwords/nuxt-foresight",
   "license": "MIT",

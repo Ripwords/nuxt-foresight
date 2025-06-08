@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.0.4
+
+[compare changes](https://github.com/Ripwords/nuxt-foresight/compare/v0.0.3...v0.0.4)
+
+### 🚀 Enhancements
+
+- Enhance Nuxt Foresight module with new configuration option for prefetch mode and update README ([14ba35a](https://github.com/Ripwords/nuxt-foresight/commit/14ba35a))
+
+### ❤️ Contributors
+
+- JJ <teohjjteoh@gmail.com>
+
 ## v0.0.3
 
 [compare changes](https://github.com/Ripwords/nuxt-foresight/compare/v0.0.2...v0.0.3)
